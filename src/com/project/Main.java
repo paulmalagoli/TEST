@@ -8,7 +8,6 @@ import com.project.model.Domino;
 import com.project.model.DominoList;
 import com.project.model.PlayerTab;
 
-import static com.project.model.PlayerTab.inputNumberOfPlayers;
 
 
 public class Main {
@@ -18,7 +17,7 @@ public class Main {
         // write your code here
         try {
             List<Domino> dominoList = DominoList.createDominoList();
-            inputNumberOfPlayers();
+            PlayerTab.inputNumberOfPlayers();
             PlayerTab.printPlayerTab(PlayerTab.createPlayerTab());
         } catch (IOException e) {
             e.printStackTrace();
