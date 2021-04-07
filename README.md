@@ -1,2 +1,11 @@
-# KINGDOMINO
- KINGDOMINO
+# Kingdomino
+
+Kingdomino is a boardgame, released in 2017 by Blue Orange Games. This is an attempt at a Java implementation of said board game.
+
+A concise, easy to understand rules explanation of Kingdomino can be found at this URL: https://www.youtube.com/watch?v=smbwBPmP4Ms. 
+
+As of 12.29.17, I have made a functioning text based version of the game. A GUI version will follow.
+
+HOW TO USE THE APPLICATION
+First, the User selects the number of players. Then, they will be shown each player's now empty play area where they will be placing dominos (a 10x10 grid). Each cell in this grid is marked "B" for blank, except the middle cell, which is marked "C" for the Castle. A set of dominoes based on the number of players will then be shown. Each domino has 2 halves, each half with a Terrain type (F for Farm, M for Mine, P for Plain, S for Swamp, W for Water, T for Tree), and a number of crowns. For example, the domino P0 S2 has a zero crown Plains Square as it's left half, and a 2 crown Swamp as it's right half.
+	In turn order, users will be able to select one domino from the shown set of dominos, by typing "1" for the topmost, 2 for the second topmost, ect. After selecting a domino, the current Player's play area will be shown, and they will then be able to place the domino they have just chosen. Each domino has a "pivot" square, which is the square on the right side of the domino. So, if a player chooses the domino "T1 F0", F0 would be the pivot square. The player then specifies the X and Y coordinates they want the pivot square to be placed at, then the heading of the pivot square, by typing N, S, E, or W (cardinal directions.) So, if a player specifies the pivot square to placed at the coordinate 3,4 with a heading of E (east), the non-pivot square will be at 2,4. If they had instead said N (North), they non pivot square be placed at (3,5). The other players, in turn order will do the same, choosing the domino and specifying where to place it.  Their board will then be updated to reflect their placement, with out of bounds areas being marked with an X. Then the next turn will begin. This will continue for 12 rounds, at which point the game will give each player their total score.
