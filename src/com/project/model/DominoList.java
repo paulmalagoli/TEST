@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class DominoList {
     public static List<Domino> createDominoList() throws FileNotFoundException {
 
-        File getCSVFiles = new File("src/com/project/public/dominos.csv");
+        File getCSVFiles = new File("TEST/src/com/project/public/dominos.csv");
 
         long lines = 0;
         try (LineNumberReader lnr = new LineNumberReader(new FileReader(getCSVFiles))) {
