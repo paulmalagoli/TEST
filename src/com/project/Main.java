@@ -1,42 +1,26 @@
 package com.project;
 
-import java.io.IOException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import java.util.List;
-
-import com.project.model.*;
-
-public class Main {
+public class Main extends Application {
+    public static String mode;
+    public static Stage stage = new Stage();
+    @Override
+    public void start(Stage stage) throws Exception{
+        stage =this.stage;
+        Parent root = FXMLLoader.load(getClass().getResource("view/homePage.fxml"));
+        Scene scene = new Scene(root);
+        stage.setTitle("Domi’Nations");
+        stage.setScene(scene);
+        stage.show();
+    }
 
 
     public static void main(String[] args) {
-        // write your code here
-        try {
-            List<Domino> dominoList = Domino.createDominoList();
-            Player.inputNumberOfPlayers();
-            Player[] playerTab = Player.createPlayerTab();
-            Player.printPlayerTab(playerTab);
-
-            Domino.cutDominoList(dominoList);
-            King[] kingTab = King.createKingTab(playerTab);
-            Castle[] castleTab = Castle.createCastleTab(playerTab);
-
-            List<Board> boardList = Board.createBoardList(playerTab);
-            Castle.selectCastle(playerTab, castleTab, boardList);
-
-            King.shuffleKingTab(kingTab);
-            Turn.firstTurn(playerTab, kingTab, dominoList, boardList);
-
-            Turn.turnLooper(playerTab, kingTab, dominoList, boardList);
-
-            List<Score> scoreList = Score.createScoreList(playerTab);
-            Score.scoreCalculation(boardList, scoreList);
-            System.out.println();
-            Score.printLeaderBoard(boardList, scoreList);
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        launch(args);
     }
 }
