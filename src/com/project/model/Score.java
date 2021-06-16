@@ -1,5 +1,8 @@
 package com.project.model;
 
+import com.project.Main;
+import javafx.scene.control.Label;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,26 +13,25 @@ public class Score {
     int playerScore = 0;
     int scopeScore = 0;
     int crownScore = 0;
+    int bonus = 0;
+    String bonusString = "";
     boolean equality = false;
-    HashMap<String, List<Integer>> domainMap = new HashMap<String, List<Integer>>() {{
-        put("Scope", new ArrayList<Integer>());
-        put("Crown", new ArrayList<Integer>());
+    HashMap<String, List<Integer>> domainMap = new HashMap<>() {{
+        put("Scope", new ArrayList<>());
+        put("Crown", new ArrayList<>());
     }};
 
     public void setScorePlayerName(String scorePlayerName) {
         this.scorePlayerName = scorePlayerName;
     }
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
-    }
-    public void setScopeScore(int scopeScore) {
-        this.scopeScore = scopeScore;
-    }
-    public void setCrownScore(int crownScore) {
-        this.crownScore = crownScore;
-    }
+
     public void setEquality(boolean equality) {
         this.equality = equality;
+    }
+
+
+    public String getBonusString() {
+        return bonusString;
     }
 
     public String getScorePlayerName() {
@@ -105,10 +107,90 @@ public class Score {
         }
     }
 
+    public static boolean harmony(Board board) {
+        Object[][][] boardTable = board.getBoardTable();
+        int row = 0;
+        int column = 0;
+        boolean pursue = true;
+        int count = 0;
+        for (int i = 0; i < boardTable.length; i++) {
+            for (int j = 0; j < boardTable[i].length; j++) {
+                if (boardTable[i][j][0] != null) {
+                    row = i;
+                    column = j;
+                    pursue = false;
+                    break;
+                }
+                if (!pursue) {
+                    break;
+                }
+            }
+        }
+        int endRow = row + 4;
+        int endColumn = column + 4;
+        if (endRow < boardTable.length && endColumn < boardTable[0].length) {
+            for (int i = row; i <= endRow; i++) {
+                for (int j = column; j <= endColumn; j++) {
+                    if (boardTable[i][j][0] != null) {
+                        count++;
+                    }
+                }
+            }
+        }
+        if (count == 25) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean theMiddleKingdom(Board board) {
+        Object[][][] boardTable = board.getBoardTable();
+
+        int firstRow = 4;
+        int firstColumn = 4;
+        int lastRow = 4;
+        int lastColumn = 4;
+        boolean empty;
+        for (int i = 0; i < boardTable.length; i++)
+        {
+            empty = true;
+            for (int j = 0; j < boardTable[i].length; j++)
+            {
+                if (boardTable[i][j][0] != null) {
+                    if (j<firstColumn) {
+                        firstColumn = j;
+                    }
+                    if (j>lastColumn) {
+                        lastColumn = j;
+                    }
+                    empty = false;
+                }
+            }
+            if (!empty) {
+                if (i<firstRow) {
+                    firstRow = i;
+                }
+                if (i>lastRow) {
+                    lastRow = i;
+                }
+            }
+        }
+        if ((lastRow - firstRow) % 2 == 0 && (lastColumn - firstColumn) % 2 == 0) {
+            int middleRow = firstRow + (lastRow - firstRow) / 2;
+            int middleColumn = firstColumn + (lastColumn - firstColumn) / 2;
+            if (boardTable[middleRow][middleColumn][0] == "0") {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void playerScoreCalculation() {
         for (int i = 0; i < this.domainMap.get("Crown").size(); i++) {
             this.playerScore += this.domainMap.get("Scope").get(i) * this.domainMap.get("Crown").get(i);
         }
+        this.playerScore += this.bonus;
     }
 
     public void scopeScoreCalculation() {
@@ -125,31 +207,46 @@ public class Score {
         }
     }
 
-    public static void scoreCalculation(List<Board> boardList, List<Score> scoreList) {
-        for (int i = 0; i < boardList.size(); i++) {
-            scoreList.get(i).editDomainMap(boardList.get(i));
-            scoreList.get(i).playerScoreCalculation();
-            scoreList.get(i).scopeScoreCalculation();
-            scoreList.get(i).crownScoreCalculation();
+    public void scoreCalculation(Board board) {
+        if (Main.mode == "Harmony") {
+            if (harmony(board)) {
+                this.bonus = 5;
+                this.bonusString = "\n   +5 bonus points harmony";
+            }
+        } else if (Main.mode == "The Middle Kingdom") {
+            if (theMiddleKingdom(board)) {
+                this.bonus = 10;
+                this.bonusString = "\n   +10 bonus points The Middle Kingdom";
+            }
+        } else {
+            this.bonus = 0;
+            this.bonusString = "";
         }
+        editDomainMap(board);
+        playerScoreCalculation();
+        scopeScoreCalculation();
+        crownScoreCalculation();
     }
 
-    public static void printLeaderBoard(List<Board> boardList, List<Score> scoreList) {
+    public static List<Label> printLeaderBoard(List<Board> boardList, List<Score> scoreList) {
         Collections.sort(scoreList, new RankComparator());
+        List<Label> labelList = new ArrayList<>();
         int rank = 0;
         for (Score score : scoreList) {
+            Label label = new  Label();
             if (!score.getEquality()){
                 rank++;
             }
-            System.out.println(rank + ": " + score.getScorePlayerName()
-                    + ", with " + score.getPlayerScore()
-                    + " points, most extensive domain of " + score.getScopeScore()
-                    + " squares, and " + score.getCrownScore() + " crowns in total");
+            label.setText(rank + ": " + score.getScorePlayerName()
+                    + "\n   with " + score.getPlayerScore()
+                    + " points\n   most extensive domain of " + score.getScopeScore()
+                    + " squares\n   " + score.getCrownScore() + " crowns in total" + score.getBonusString());
             for (Board board : boardList) {
                 if (board.getBoardPlayerName() == score.getScorePlayerName()){
-                    board.printBoard();
+                    labelList.add(label);
                 }
             }
         }
+        return labelList;
     }
 }

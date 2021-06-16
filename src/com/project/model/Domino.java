@@ -1,17 +1,20 @@
 package com.project.model;
 
+import javafx.scene.shape.Rectangle;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Domino {
+public class Domino extends Rectangle {
     int dominoNumber;
     int nbCrown1;
     String type1;
     int nbCrown2;
     String type2;
+    public static List<Domino> dominoList;
 
     public Domino(int dominoNumber, int nbCrown1, String type1, int nbCrown2, String type2) {
         this.dominoNumber = dominoNumber;
@@ -21,22 +24,6 @@ public class Domino {
         this.type2 = type2;
     }
 
-    public void setNbCrown1(int nbCrown1) {
-        this.nbCrown1 = nbCrown1;
-    }
-    public void setType1(String type1) {
-        this.type1 = type1;
-    }
-    public void setNbCrown2(int nbCrown2) {
-        this.nbCrown2 = nbCrown2;
-    }
-    public void setType2(String type2) {
-        this.type2 = type2;
-    }
-    public void setDominoNumber(int NumeroDomino) {
-        this.dominoNumber = NumeroDomino;
-    }
-
 
     public int getNbCrown1() {
         return this.nbCrown1;
@@ -44,17 +31,17 @@ public class Domino {
     public String getType1() {
         switch(this.type1) {
             case "Champs":
-                return ConsoleColors.YELLOW + "C" + ConsoleColors.RESET;
+                return "C";
             case "Foret":
-                return ConsoleColors.GREEN + "F" + ConsoleColors.RESET;
+                return "F";
             case "Mer":
-                return ConsoleColors.BLUE + "M" + ConsoleColors.RESET;
+                return "M";
             case "Prairie":
-                return ConsoleColors.PURPLE + "P" + ConsoleColors.RESET;
+                return "P";
             case "Mine":
-                return ConsoleColors.CYAN + "I" + ConsoleColors.RESET;
+                return "I";
             case "Montagne":
-                return ConsoleColors.WHITE + "T" + ConsoleColors.RESET;
+                return "T";
             default:
                 return null;
         }
@@ -65,17 +52,17 @@ public class Domino {
     public String getType2() {
         switch(this.type2) {
             case "Champs":
-                return ConsoleColors.YELLOW + "C" + ConsoleColors.RESET;
+                return "C";
             case "Foret":
-                return ConsoleColors.GREEN + "F" + ConsoleColors.RESET;
+                return "F";
             case "Mer":
-                return ConsoleColors.BLUE + "M" + ConsoleColors.RESET;
+                return "M";
             case "Prairie":
-                return ConsoleColors.PURPLE + "P" + ConsoleColors.RESET;
+                return "P";
             case "Mine":
-                return ConsoleColors.CYAN + "I" + ConsoleColors.RESET;
+                return "I";
             case "Montagne":
-                return ConsoleColors.WHITE + "T" + ConsoleColors.RESET;
+                return "T";
             default:
                 return null;
         }
@@ -85,23 +72,14 @@ public class Domino {
     }
 
 
-    public static List<Domino> createDominoList() throws FileNotFoundException {
+    public static void createDominoList() throws FileNotFoundException {
 
-        File getCSVFiles = new File("src/com/project/public/dominos.csv");
-
-        long lines = 0;
-        try (LineNumberReader lnr = new LineNumberReader(new FileReader(getCSVFiles))) {
-            while (lnr.readLine() != null) {
-                lines = lnr.getLineNumber();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File getCSVFiles = new File("src/com/project/public/csv/dominos.csv");
 
         Scanner sc = new Scanner(getCSVFiles);
         sc.useDelimiter(",");
         sc.nextLine();
-        List<Domino> dominoList = new ArrayList<>();
+        dominoList = new ArrayList<>();
 
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
@@ -116,12 +94,9 @@ public class Domino {
             dominoList.add(new Domino(dominoNumber, nbCrown1, type1, nbCrown2, type2));
         }
         sc.close();
-
-        return dominoList;
-
     }
 
-    public static void cutDominoList(List<Domino> dominoList) {
+    public static void cutDominoList() {
         Random random = new Random();
         if (Player.numberOfPlayers == 2) {
             for (int i = 0; i < 24; i++) {
@@ -133,7 +108,6 @@ public class Domino {
                 int nb = random.nextInt(48-i);
                 dominoList.remove(nb);
             }
-        } else {
         }
     }
 }
