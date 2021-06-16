@@ -1,26 +1,26 @@
 package com.project;
 
-import java.io.IOException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import java.util.List;
-
-import com.project.model.Domino;
-import com.project.model.DominoList;
-import com.project.model.PlayerTab;
-
-
-
-public class Main {
+public class Main extends Application {
+    public static String mode;
+    public static Stage stage = new Stage();
+    @Override
+    public void start(Stage stage) throws Exception{
+        stage =this.stage;
+        Parent root = FXMLLoader.load(getClass().getResource("view/homePage.fxml"));
+        Scene scene = new Scene(root);
+        stage.setTitle("Domi’Nations");
+        stage.setScene(scene);
+        stage.show();
+    }
 
 
     public static void main(String[] args) {
-        // write your code here
-        try {
-            List<Domino> dominoList = DominoList.createDominoList();
-            PlayerTab.inputNumberOfPlayers();
-            PlayerTab.printPlayerTab(PlayerTab.createPlayerTab());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        launch(args);
     }
 }
