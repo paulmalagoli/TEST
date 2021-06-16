@@ -7,6 +7,9 @@ public class Board {
     Object[][][] boardTable = new Object[9][9][2];
     List<String> availableRangeList = new ArrayList<>();
     String boardPlayerName;
+    String boardColor;
+
+    public static List<Board> boardList;
 
 
     public void setBoardPlayerName(String playerName) {
@@ -16,17 +19,28 @@ public class Board {
         return this.boardPlayerName;
     }
 
+    public void setBoardColor(String boardColor) {
+        this.boardColor = boardColor;
+    }
+    public String getBoardColor() {
+        return this.boardColor;
+    }
+
     public Object[][][] getBoardTable() {
         return this.boardTable;
     }
 
-    public static List<Board> createBoardList(Player[] playerTab) {
-        List<Board> boardList = new ArrayList<>();
-        for (int i = 0; i < playerTab.length; i++) {
+    public void setBoardTable(Object[][][] boardTable) {
+        this.boardTable = boardTable;
+    }
+
+    public static void createBoardList() {
+        boardList = new ArrayList<>();
+        for (int i = 0; i < Player.numberOfPlayers; i++) {
             boardList.add(new Board());
-            boardList.get(i).setBoardPlayerName(playerTab[i].getPlayerName());
+            boardList.get(i).setBoardPlayerName(Player.playerTab[i].getPlayerName());
+            boardList.get(i).setBoardColor(Player.playerTab[i].getPlayerColor());
         }
-        return boardList;
     }
 
     public void insertCastle() {
@@ -34,27 +48,31 @@ public class Board {
         this.boardTable[4][4][1] = 0;
     }
 
-    public void insertDomino(Domino domino, int row1, int column1, int row2, int column2) {
-        this.boardTable[row1][column1][0] = domino.getType1();
-        this.boardTable[row1][column1][1] = domino.getNbCrown1();
-        this.boardTable[row2][column2][0] = domino.getType2();
-        this.boardTable[row2][column2][1] = domino.getNbCrown2();
-    }
-
-    public void printBoard() {
-        for (int i = 0; i < this.boardTable.length; i++) {
-            for (int j = 0; j < this.boardTable[i].length; j++) {
-                if (this.boardTable[i][j][0] != null && this.boardTable[i][j][0] != "0") {
-                    System.out.format("%-2s ", (String) this.boardTable[i][j][0] + (int) this.boardTable[i][j][1]);
-                } else if (this.boardTable[i][j][0] == "0"){
-                    System.out.format("%-2s ", ConsoleColors.RED + (String) this.boardTable[i][j][0] + (int) this.boardTable[i][j][1] + ConsoleColors.RESET);
-                } else {
-                    System.out.format("%2s ", String.valueOf(i) + String.valueOf(j));
-                }
-            }
-            System.out.println();
+    public void insertDomino(Domino domino, int row, int column, int rotation) {
+        int row1 = 0;
+        int column1 = 0;
+        switch (rotation) {
+            case 0:
+                row1 = row;
+                column1 = column + 1;
+                break;
+            case 1:
+                row1 = row + 1;
+                column1 = column;
+                break;
+            case 2:
+                row1 = row;
+                column1 = column - 1;
+                break;
+            case 3:
+                row1 = row - 1;
+                column1 = column;
+                break;
         }
-        System.out.println();
+        this.boardTable[row][column][0] = domino.getType1();
+        this.boardTable[row][column][1] = domino.getNbCrown1();
+        this.boardTable[row1][column1][0] = domino.getType2();
+        this.boardTable[row1][column1][1] = domino.getNbCrown2();
     }
 
     public void editAvailableRangeList() {
@@ -108,6 +126,37 @@ public class Board {
             }
         }
         availableRangeList.remove("44");
+    }
+
+    public int checkInsert(Domino domino, int row, int column, int rotate) {
+        int event = 0;
+        int row1 = 0;
+        int column1 = 0;
+        switch (rotate) {
+            case 0:
+                row1 = row;
+                column1 = column + 1;
+                break;
+            case 1:
+                row1 = row + 1;
+                column1 = column;
+                break;
+            case 2:
+                row1 = row;
+                column1 = column - 1;
+                break;
+            case 3:
+                row1 = row - 1;
+                column1 = column;
+                break;
+        }
+        if (checkRange(String.valueOf(row) + String.valueOf(column)) && checkRange(String.valueOf(row1) + String.valueOf(column1))) {
+            event = 1;
+            if (checkConnection(domino, row, column, row1, column1)) {
+                event = 2;
+            }
+        }
+        return event;
     }
 
     public boolean checkRange(String location) {
